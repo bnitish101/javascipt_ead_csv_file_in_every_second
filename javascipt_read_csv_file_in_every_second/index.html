@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nio</title>
+    <style>
+        td {
+            border: 2px solid blue;
+        }
+    </style>
+</head>
+<body>
+	<button onclick="ocStrat()">Start</button> <button onclick="ocStop()">Stop</button>
+    <table>
+
+    </table>
+    <script>
+		// get data on page load with header
+        onload = csvRead('onload');
+		
+		// csv read function
+		function csvRead(calledFrom){
+			// debugger
+			fetch("./test.csv").then(res => {
+				return res.text()
+			}).then(data => {
+				let result = data.split(/\r?\n|\r/).map(e => {
+					return e.split(",")
+				})
+				// console.log(result);return false;
+				
+				// check the fuction called from and remove first row of header
+				if(calledFrom == 'setInterval'){
+					result = result.slice(1);
+				}
+				result.forEach(e => {
+					let m = e.map(e => {
+						// return `<td>${e}</td>`;
+						return '<td>'+e+'</td>';
+					}).join("")
+					let ce = document.createElement("tr");
+					ce.innerHTML = m;
+					if (ce.innerText != "") {
+						document.querySelector("table").appendChild(ce);
+					}
+					console.log(m);
+
+				})
+			})
+		}
+		
+		// default set as stop
+		var req = 'stop';
+		
+		function ocStrat(){
+			req = 'start';
+		}
+		function ocStop(){
+			req = 'stop';
+		}
+		
+		// set calling interval of 1 second
+		setInterval(function(){
+			if(req == 'start'){
+				csvRead('setInterval'); 
+			}else{
+				return false;
+			}
+		}, 1000);
+		
+    </script>
+</body>
+</html>
